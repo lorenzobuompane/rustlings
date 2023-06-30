@@ -23,8 +23,6 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
-
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
 // You need to create an implementation for a tuple of three integers,
@@ -38,6 +36,17 @@ enum IntoColorError {
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        match tuple {
+            (r, g, b) if !(0 <= r && r <= 255 && 0 <= g && g <= 255 && 0 <= b && b <= 255) => {
+                Err(IntoColorError::IntConversion)
+            }
+            (r, g, b) => Ok(Color {
+                red: r as u8,
+                green: g as u8,
+                blue: b as u8,
+            }),
+            _ => Err(IntoColorError::BadLen),
+        }
     }
 }
 
@@ -45,6 +54,23 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        match arr.len() == 3 {
+            true if !(0 <= arr[0]
+                && arr[0] <= 255
+                && 0 <= arr[1]
+                && arr[1] <= 255
+                && 0 <= arr[2]
+                && arr[2] <= 255) =>
+            {
+                Err(IntoColorError::IntConversion)
+            }
+            true => Ok(Color {
+                red: arr[0] as u8,
+                green: arr[1] as u8,
+                blue: arr[2] as u8,
+            }),
+            false => Err(IntoColorError::BadLen),
+        }
     }
 }
 
@@ -52,6 +78,24 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        let params = slice.iter().map(|x| *x).collect::<Vec<i16>>();
+        match params.len() == 3 {
+            true if !(0 <= params[0]
+                && params[0] <= 255
+                && 0 <= params[1]
+                && params[1] <= 255
+                && 0 <= params[2]
+                && params[2] <= 255) =>
+            {
+                Err(IntoColorError::IntConversion)
+            }
+            true => Ok(Color {
+                red: params[0] as u8,
+                green: params[1] as u8,
+                blue: params[2] as u8,
+            }),
+            false => Err(IntoColorError::BadLen),
+        }
     }
 }
 
